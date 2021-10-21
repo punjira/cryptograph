@@ -27,7 +27,7 @@ services:
 
   study:
     container_name: study
-    image: coin-provider
+    image: study
     build:
       context: ./study
       dockerfile: Dockerfile
