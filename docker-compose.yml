@@ -1,0 +1,218 @@
+version: "3.7"
+services:
+  # ---------------------  application services  -----------------------
+  coin-provider:
+    container_name: coin-provider
+    image: coin-provider
+    build:
+      context: ./coin-provider
+      dockerfile: Dockerfile
+    command: npm start
+    environment:
+      MONGO_URL: mongodb://coin-provider-database:27017
+      NATS_URL: http://nats-streaming-server:4222
+      PORT: 4000
+    volumes:
+      - ./coin-provider/src:/app/src
+      - ./coin-provider/node_modules:/app/node_modules
+    ports:
+      - "4000:4000"
+    networks:
+      - production-network
+      - coin-provider-network
+      - nats-steaming-network
+    depends_on:
+      - coin-provider-database
+      - nats-streaming-server
+
+  study:
+    container_name: study
+    image: coin-provider
+    build:
+      context: ./study
+      dockerfile: Dockerfile
+    command: npm start
+    environment:
+      MONGO_URL: mongodb://python-trend-database:27019
+      NATS_URL: http://nats-streaming-server:4222
+      NATS_CHANNEL: cryptograph
+      PORT: 4002
+      REDIS_HOST: history-redis-python-slave
+      REDIS_PORT: 6379
+    volumes:
+      - ./study/src:/app/src
+      - ./study/node_modules:/app/node_modules
+    ports:
+      - "4002:4002"
+    networks:
+      - study-network
+      - nats-steaming-network
+    depends_on:
+      - redis
+      - study-database
+
+  history-provider:
+    container_name: history-provider
+    image: history-provider
+    build:
+      context: ./history-provider
+      dockerfile: Dockerfile
+    command: npm start
+    environment:
+      MONGO_URL: mongodb://history-provider-database:27017
+      NATS_URL: http://nats-streaming-server:4222
+      REDIS_HOST: history-redis-master
+      REDIS_PORT: 6379
+      PORT: 4001
+    volumes:
+      - ./history-provider/src:/app/src
+      - ./history-provider/node_modules:/app/node_modules
+    ports:
+      - "4001:4001"
+    networks:
+      - production-network
+      - history-provider-network
+      - nats-steaming-network
+      - redis-history-network
+    depends_on:
+      - history-provider-database
+      - nats-streaming-server
+      - history-redis-master
+
+  python-trend-service:
+    container_name: python-trend-service
+    build:
+      context: ./trend
+      dockerfile: Dockerfile
+    environment:
+      NATS_URL: http://nats-streaming-server:4222
+      NATS_CLUSTER_NAME: cryptograph
+      REDIS_HOST: history-redis-python-slave
+      REDIS_PORT: 6379
+    networks:
+      - nats-steaming-network
+      - history-provider-network
+    depends_on:
+      - nats-streaming-server
+      - history-provider
+      - history-redis-python-slave
+
+  # -------------------------  nginx services  --------------------------
+
+  nginx:
+    image: nginx:latest
+    container_name: production-nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+      - "443:443"
+    networks:
+      - production-network
+    depends_on:
+      - coin-provider
+      - history-provider
+      - study
+
+  # ----------------------------  database  ------------------------------
+
+  coin-provider-database:
+    container_name: coin-provider-database
+    image: mongo
+    volumes:
+      - ./coin-db:/data/db:rw
+    logging:
+      driver: "none"
+    ports:
+      - "27017:27017"
+    networks:
+      - coin-provider-network
+
+  history-provider-database:
+    container_name: history-provider-database
+    image: mongo
+    logging:
+      driver: "none"
+    volumes:
+      - ./history-db:/data/db:rw
+    ports:
+      - "27018:27017"
+    networks:
+      - history-provider-network
+
+  study-database:
+    container_name: study-database
+    image: mongo
+    logging:
+      driver: "none"
+    volumes:
+      - ./study-db:/data/db:rw
+    ports:
+      - "27019:27017"
+    networks:
+      - study-network
+
+  # ----------------------------------  nats  ----------------------------------
+
+  nats-streaming-server:
+    container_name: nats
+    image: nats-streaming:0.17.0
+    command:
+      [
+        "-p",
+        "4222",
+        "-m",
+        "8222",
+        "-hbi",
+        "5s",
+        "-hbt",
+        "5s",
+        "-hbf",
+        "2",
+        "-SD",
+        "-cid",
+        "cryptograph"
+      ]
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    networks:
+      - nats-steaming-network
+
+  # -------------------------------  redis  ---------------------------------
+
+  history-redis-master:
+    container_name: history-redis-master
+    image: redis
+    ports:
+      - 6381:6379
+    networks:
+      - redis-history-network
+
+  history-redis-python-slave:
+    container_name: history-redis-python-slave
+    image: redis
+    command: redis-server --slaveof redis-master 6379
+    links:
+      - history-redis-master:redis-master
+    ports:
+      - "6380:6379"
+    depends_on:
+      - history-redis-master
+    networks:
+      - redis-history-network
+
+# --------------------------------  networks  ------------------------------
+
+networks:
+  coin-provider-network:
+    driver: bridge
+  history-provider-network:
+    driver: bridge
+  nats-steaming-network:
+    driver: bridge
+  redis-history-network:
+    driver: bridge
+  study-network:
+    driver: bridge
+  production-network:
