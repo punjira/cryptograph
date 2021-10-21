@@ -48,8 +48,9 @@ services:
       - study-network
       - nats-steaming-network
     depends_on:
-      - redis
+      - history-redis-python-slave
       - study-database
+      - nats-streaming-server
 
   history-provider:
     container_name: history-provider
