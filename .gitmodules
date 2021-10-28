@@ -1,3 +1,6 @@
 [submodule "coin-provider"]
 	path = coin-provider
 	url = https://github.com/punjira/cryptograph-coin-provider
+[submodule "history-provider"]
+	path = history-provider
+	url = https://github.com/punjira/cryptograph-history-provider
