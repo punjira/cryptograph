@@ -7,3 +7,6 @@
 [submodule "trend"]
 	path = trend
 	url = https://github.com/punjira/cryptograph-stock-trend
+[submodule "web-client"]
+	path = web-client
+	url = ./web-client
