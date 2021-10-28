@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coin-provider-mongo-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coin-provider-mongo-database
+  template:
+    metadata:
+      labels:
+        app: coin-provider-mongo-database
+    spec:
+      containers:
+        - name: coin-provider-mongo-database
+          image: mongo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coin-provider-mongo-srv
+spec:
+  selector:
+    app: coin-provider-mongo-database
+  type: ClusterIP
+  ports:
+    - name: coin-provider-db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

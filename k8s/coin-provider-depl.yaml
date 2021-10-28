@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: coin-provider-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: coin-provider
+  template:
+    metadata:
+      labels:
+        app: coin-provider
+    spec:
+      containers:
+        - name: coin-provider
+          image: cryptograp/coin-provider
+          resources:
+            limits:
+              memory: "128Mi"
+              cpu: "200m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: coin-provider-srv
+spec:
+  selector:
+    app: coin-provider
+  type: ClusterIP
+  ports:
+    - name: coin-provider
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
