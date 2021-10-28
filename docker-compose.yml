@@ -31,13 +31,13 @@ services:
     build:
       context: ./study
       dockerfile: Dockerfile
-    command: npm start
+    command: npm run dev
     environment:
-      MONGO_URL: mongodb://python-trend-database:27019
+      MONGO_URL: mongodb://study-database:27017
       NATS_URL: http://nats-streaming-server:4222
       NATS_CHANNEL: cryptograph
       PORT: 4002
-      REDIS_HOST: history-redis-python-slave
+      REDIS_HOST: study-redis-replica
       REDIS_PORT: 6379
     volumes:
       - ./study/src:/app/src
@@ -47,8 +47,9 @@ services:
     networks:
       - study-network
       - nats-steaming-network
+      - production-network
     depends_on:
-      - history-redis-python-slave
+      - history-redis-python-replica
       - study-database
       - nats-streaming-server
 
@@ -88,15 +89,15 @@ services:
     environment:
       NATS_URL: http://nats-streaming-server:4222
       NATS_CLUSTER_NAME: cryptograph
-      REDIS_HOST: history-redis-python-slave
+      REDIS_HOST: history-redis-python-replica
       REDIS_PORT: 6379
     networks:
       - nats-steaming-network
-      - history-provider-network
+      - redis-history-network
     depends_on:
       - nats-streaming-server
       - history-provider
-      - history-redis-python-slave
+      - history-redis-python-replica
 
   # -------------------------  nginx services  --------------------------
 
@@ -190,8 +191,8 @@ services:
     networks:
       - redis-history-network
 
-  history-redis-python-slave:
-    container_name: history-redis-python-slave
+  history-redis-python-replica:
+    container_name: history-redis-python-replica
     image: redis
     command: redis-server --slaveof redis-master 6379
     links:
@@ -202,6 +203,20 @@ services:
       - history-redis-master
     networks:
       - redis-history-network
+
+  study-redis-replica:
+    container_name: study-redis-replica
+    image: redis
+    command: redis-server --slaveof redis-master 6379
+    links:
+      - history-redis-master:redis-master
+    ports:
+      - "6382:6379"
+    depends_on:
+      - history-redis-master
+    networks:
+      - redis-history-network
+      - study-network
 
 # --------------------------------  networks  ------------------------------
 
