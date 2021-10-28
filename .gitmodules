@@ -4,3 +4,6 @@
 [submodule "history-provider"]
 	path = history-provider
 	url = https://github.com/punjira/cryptograph-history-provider
+[submodule "trend"]
+	path = trend
+	url = https://github.com/punjira/cryptograph-stock-trend
