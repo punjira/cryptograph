@@ -12,4 +12,4 @@
 	url = https://github.com/punjira/cryptograph-web-client
 [submodule "candlesticks"]
 	path = candlesticks
-	url = ./candlesticks
+	url = https://github.com/punjira/cryptograph-candlestick-scanner
