@@ -10,3 +10,6 @@
 [submodule "web-client"]
 	path = web-client
 	url = ./web-client
+[submodule "candlesticks"]
+	path = candlesticks
+	url = ./candlesticks
