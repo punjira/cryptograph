@@ -16,3 +16,6 @@
 [submodule "study"]
 	path = study
 	url = https://github.com/punjira/cryptograph-study
+[submodule "indicators"]
+	path = indicators
+	url = ./indicators
