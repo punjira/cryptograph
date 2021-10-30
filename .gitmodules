@@ -13,3 +13,6 @@
 [submodule "candlesticks"]
 	path = candlesticks
 	url = https://github.com/punjira/cryptograph-candlestick-scanner
+[submodule "study"]
+	path = study
+	url = https://github.com/punjira/cryptograph-study
