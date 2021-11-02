@@ -2,7 +2,7 @@ version: "3.7"
 services:
   coin-provider:
     container_name: coin-provider
-    image: cryptograp/coin-provider
+    image: cryptograp/coin-provider:master
     command: npm start
     environment:
       MONGO_URL: mongodb://coin-provider-database:27017
@@ -20,7 +20,7 @@ services:
 
   study:
     container_name: study
-    image: cryptograp/study
+    image: cryptograp/study:master
     command: npm start
     environment:
       MONGO_URL: mongodb://study-database:27017
@@ -42,7 +42,7 @@ services:
 
   history-provider:
     container_name: history-provider
-    image: cryptograp/history-provider
+    image: cryptograp/history-provider:master
     command: npm start
     environment:
       MONGO_URL: mongodb://history-provider-database:27017
@@ -64,7 +64,7 @@ services:
 
   python-trend-service:
     container_name: python-trend-service
-    image: cryptograp/trends
+    image: cryptograp/trends:master
     environment:
       NATS_URL: http://nats-streaming-server:4222
       NATS_CLUSTER_NAME: cryptograph
@@ -80,7 +80,7 @@ services:
 
   python-indicator-service:
     container_name: python-indicator-service
-    image: cryptograp/indicators
+    image: cryptograp/indicators:master
     environment:
       NATS_URL: http://nats-streaming-server:4222
       NATS_CLUSTER_NAME: cryptograph
@@ -96,7 +96,7 @@ services:
 
   python-candlestick-service:
     container_name: python-candlestick-service
-    images: cryptograp/candlesticks
+    image: cryptograp/candlesticks:master
     environment:
       NATS_URL: http://nats-streaming-server:4222
       NATS_CLUSTER_NAME: cryptograph
