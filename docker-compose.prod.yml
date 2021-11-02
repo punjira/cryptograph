@@ -128,6 +128,8 @@ services:
   coin-provider-database:
     container_name: coin-provider-database
     image: mongo:4.4
+    logging:
+      driver: "none"
     volumes:
       - ./coin-db:/data/db:rw
     ports:
@@ -138,6 +140,8 @@ services:
   history-provider-database:
     container_name: history-provider-database
     image: mongo:4.4
+    logging:
+      driver: "none"
     volumes:
       - ./history-db:/data/db:rw
     ports:
@@ -148,6 +152,8 @@ services:
   study-database:
     container_name: study-database
     image: mongo:4.4
+    logging:
+      driver: "none"
     volumes:
       - ./study-db:/data/db:rw
     ports:
