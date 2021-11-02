@@ -31,7 +31,7 @@ services:
     build:
       context: ./study
       dockerfile: Dockerfile
-    command: npm run dev
+    command: npm start
     environment:
       MONGO_URL: mongodb://study-database:27017
       NATS_URL: http://nats-streaming-server:4222
@@ -85,6 +85,42 @@ services:
     container_name: python-trend-service
     build:
       context: ./trend
+      dockerfile: Dockerfile
+    environment:
+      NATS_URL: http://nats-streaming-server:4222
+      NATS_CLUSTER_NAME: cryptograph
+      REDIS_HOST: history-redis-python-replica
+      REDIS_PORT: 6379
+    networks:
+      - nats-steaming-network
+      - redis-history-network
+    depends_on:
+      - nats-streaming-server
+      - history-provider
+      - history-redis-python-replica
+
+  python-indicator-service:
+    container_name: python-indicator-service
+    build:
+      context: ./indicators
+      dockerfile: Dockerfile
+    environment:
+      NATS_URL: http://nats-streaming-server:4222
+      NATS_CLUSTER_NAME: cryptograph
+      REDIS_HOST: history-redis-python-replica
+      REDIS_PORT: 6379
+    networks:
+      - nats-steaming-network
+      - redis-history-network
+    depends_on:
+      - nats-streaming-server
+      - history-provider
+      - history-redis-python-replica
+
+  python-candlestick-service:
+    container_name: python-candlestick-service
+    build:
+      context: ./candlesticks
       dockerfile: Dockerfile
     environment:
       NATS_URL: http://nats-streaming-server:4222
@@ -173,7 +209,7 @@ services:
         "2",
         "-SD",
         "-cid",
-        "cryptograph"
+        "cryptograph",
       ]
     ports:
       - "4222:4222"
