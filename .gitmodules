@@ -18,4 +18,4 @@
 	url = https://github.com/punjira/cryptograph-study
 [submodule "indicators"]
 	path = indicators
-	url = ./indicators
+	url = https://github.com/punjira/cryptograph-indicators
