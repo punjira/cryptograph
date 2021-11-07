@@ -17,6 +17,14 @@ Cryptograph aims to solve these complexities.
 
 ## The How
 
+## What is cryptograp
+
+cryptograph was taken!
+
+## github actions
+
+pushing to master on main repo will trigger github actions which will build and push each image to its docker-hub repo.
+
 ## Nats
 
 ## Services
