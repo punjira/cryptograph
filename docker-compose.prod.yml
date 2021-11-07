@@ -76,6 +76,7 @@ services:
     networks:
       - nats-steaming-network
       - redis-history-network
+      - study-network
     depends_on:
       - nats-streaming-server
       - history-provider
@@ -92,6 +93,7 @@ services:
     networks:
       - nats-steaming-network
       - redis-history-network
+      - study-network
     depends_on:
       - nats-streaming-server
       - history-provider
@@ -108,6 +110,7 @@ services:
     networks:
       - nats-steaming-network
       - redis-history-network
+      - study-network
     depends_on:
       - nats-streaming-server
       - history-provider
