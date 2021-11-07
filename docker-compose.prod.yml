@@ -29,6 +29,9 @@ services:
       PORT: 4002
       REDIS_HOST: study-redis-replica
       REDIS_PORT: 6379
+      TREND: http://python-trend-service:5000/create
+      CANDLESTICK: http://python-candlestick-service:5000/create
+      INDICATOR: http://python-indicator-service:5000/create
     ports:
       - "4002:4002"
     networks:
