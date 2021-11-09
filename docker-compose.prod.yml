@@ -43,6 +43,25 @@ services:
       - study-database
       - nats-streaming-server
 
+  notify:
+    container_name: notify
+    image: cryptograp/notify:master
+    command: npm start
+    environment:
+      MONGO_URL: mongodb://notify-database:27017
+      NATS_URL: http://nats-streaming-server:4222
+      NATS_CHANNEL: cryptograph
+      PORT: 4003
+    ports:
+      - "4003:4003"
+    networks:
+      - notify-network
+      - nats-steaming-network
+      - production-network
+    depends_on:
+      - notify-database
+      - nats-streaming-server
+
   history-provider:
     container_name: history-provider
     image: cryptograp/history-provider:master
@@ -167,6 +186,18 @@ services:
     networks:
       - study-network
 
+  notify-database:
+    container_name: notify-database
+    image: mongo:4.4
+    logging:
+      driver: "none"
+    volumes:
+      - ./notify-db:/data/db:rw
+    ports:
+      - "27020:27017"
+    networks:
+      - notify-network
+
   nats-streaming-server:
     container_name: nats
     image: nats-streaming:0.17.0
@@ -239,5 +270,7 @@ networks:
   redis-history-network:
     driver: bridge
   study-network:
+    driver: bridge
+  notify-network:
     driver: bridge
   production-network:
