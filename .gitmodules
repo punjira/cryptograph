@@ -19,3 +19,6 @@
 [submodule "indicators"]
 	path = indicators
 	url = https://github.com/punjira/cryptograph-indicators
+[submodule "notify"]
+	path = notify
+	url = https://github.com/punjira/cryptograph-notify
